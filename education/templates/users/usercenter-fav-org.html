@@ -1,0 +1,70 @@
+{% extends 'users/usercenter-base.html' %}
+{% load staticfiles %}
+{% block title %}
+    我的收藏
+{% endblock %}
+{% block crumbs %}
+    用户收藏 - 机构
+{% endblock %}
+{% block left %}
+    <div class="left">
+        <ul>
+            <li ><a href="{% url 'users:user_info' %}">个人资料</a></li>
+            <li ><a href="{% url 'users:user_course' %}">我的课程</a></li>
+            <li class="active2"><a href="{% url 'users:user_fav' %}?type=course&type_id=3">我的收藏</a></li>
+            <li >
+                <a href="{% url 'users:user_message' %}" style="position: relative;">
+                    我的消息
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+{% block right %}
+    <div class="right" >
+            <div class="personal_des Releasecont">
+                <div class="head">
+                    <h1>我的收藏</h1>
+                </div>
+
+            </div>
+            <div class="personal_des permessage">
+                <div class="head">
+                    <ul class="tab_header messagehead">
+                        <li class="active"><a href="{% url 'users:user_fav' %}?type=org&type_id=1">课程机构</a> </li>
+                        <li><a href="{% url 'users:user_fav' %}?type=teacher&type_id=2">授课教师 </a></li>
+                        <li><a href="{% url 'users:user_fav' %}?type=course&type_id=3">公开课程</a></li>
+                    </ul>
+                </div>
+                <div class="messagelist">
+                {% for org in all_fav %}
+                    <div class="messages butler_list company company-fav-box">
+                        <dl class="des fr">
+                            <dt>
+                                <a href="{% url 'orgs:org_detail' org.id %}">
+                                    <img width="160" height="90" src="{{ MEDIA_URL }}{{ org.image }}"/>
+                                </a>
+                            </dt>
+                            <dd>
+                                <h1><a href="{% url 'orgs:org_detail' org.id %}">{{ org.name }}</a></h1>
+                                <div class="pic fl" style="width:auto;">
+
+                                    <img src="{% static 'images/authentication.png' %}"/>
+
+
+                                    <img src="{% static 'images/gold.png' %}"/>
+
+                                </div>
+                                <span class="c8 clear">{{ org.cityinfo_name }}</span>
+                                <div class="delete jsDeleteFav_org" data-favid="1"></div>
+                            </dd>
+                        </dl>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+

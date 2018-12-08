@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    课程机构列表 - 千锋教育
+{% endblock %}
+{% block middle %}
+    <div class="middle">
+        <div class="wp">
+            <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo1.png' %}"/></a>
+            <div class="searchbox fr">
+                <div class="selectContainer fl">
+                    <span class="selectOption" id="jsSelectOption" data-value="course">
+                        公开课
+                    </span>
+                    <ul class="selectMenu" id="jsSelectMenu">
+                        <li data-value="course">公开课</li>
+                        <li data-value="org">课程机构</li>
+                        <li data-value="teacher">授课老师</li>
+                    </ul>
+                </div>
+                <input id="search_keywords" class="fl" type="text" value="" placeholder="请输入搜索内容"/>
+                <img class="search_btn fr" id="jsSearchBtn" src="{% static 'images/search_btn.png' %}"/>
+            </div>
+        </div>
+    </div>
+    <nav>
+        <div class="nav">
+            <div class="wp">
+                <ul>
+                    <li><a href="{% url 'index' %}">首页</a></li>
+                    <li>
+                        <a href="{% url 'courses:course_list' %}?hot=course">公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'orgs:teachers_list' %}?hot=teacher">授课教师</a>
+                    </li>
+                    <li class="active"><a href="{% url 'orgs:orgs_list' %}?hot=org">授课机构</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+{% block content %}
+    <section>
+			<div class="wp">
+				<ul class="crumbs">
+					<li><a href="{% url 'index' %}">首页</a>></li>
+					<li>课程机构</li>
+				</ul>
+			</div>
+		</section>
+
+    <section>
+			<div class="wp butler_list_box list">
+				<div class='left'>
+					<div class="listoptions">
+						<ul>
+							<li>
+								<h2>机构类别</h2>
+								<div class="cont">
+									<a href="?city={{ cityid }}"><span {% ifequal cotegory ''%}class="active2"{% endifequal %}>全部</span></a>
+
+									<a href="?ct=jg&city={{ cityid }}"><span {% ifequal cotegory ''%}class="active2"{% endifequal %}>培训机构</span></a>
+
+									<a href="?ct=gx&city={{ cityid }}"><span {% ifequal cotegory ''%}class="active2"{% endifequal %}>高校</span></a>
+
+									<a href="?ct=gr&city={{ cityid }}"><span {% ifequal cotegory ''%}class="active2"{% endifequal %}>个人</span></a>
+
+								</div>
+							</li>
+							<li>
+								<h2>所在地区</h2>
+								<div class="more">更多</div>
+								<div class="cont">
+									<a href="?ct={{ category }}"><span {% ifequal cityid '' %}class="active2"{% endifequal %}>全部</span></a>
+                                    {% for city in citys_all %}
+                                        <a href="?city={{ city.id }}&ct={{ category }}"><span {% ifequal city.id|stringformat:'i' cityid %}class="active2"{% endifequal %}class="">{{ city.name }}</span></a>
+                                    {% endfor %}
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="all">共<span class="key">{{ page_list.paginator.count }}</span>家</div>
+					<div class="butler_list company list">
+						<div class="layout">
+							<div class="head">
+								<ul class="tab_header">
+									<li {% ifequal sort '' %}class="active"{% endifequal %}><a href="?ct=&city=">全部</a> </li>
+									<li {% ifequal sort 'student_num' %}class="active"{% endifequal %}><a href="?sort=student_num&ct=&city=">学习人数 &#8595;</a></li>
+									<li {% ifequal sort 'course_num' %}class="active"{% endifequal %}><a href="?sort=course_num&ct=&city=">课程数 &#8595;</a></li>
+								</ul>
+							</div>
+                            {% for org in page_list %}
+							<dl class="des difdes">
+								<dt>
+									<a href="{% url 'orgs:org_detail' org.id %}?tag=homepage">
+										<img width="200" height="120" class="scrollLoading" data-url="{{ MEDIA_URL }}{{ org.image }}" />
+									</a>
+								</dt>
+								<dd>
+									<div class="clearfix">
+										<a href="org-detail-homepage.html">
+											<h1>{{ org.name }}</h1>
+											<div class="pic fl">
+
+												<img src="{% static 'images/authentication.png' %}" />
+
+												<img src="{% static 'images/gold.png' %}" />
+
+											</div>
+										</a>
+									</div>
+									<ul class="cont">
+										<li class="first">
+											<p class="pic9">课程数：<span>{{ org.courseinfo_set }}</span></p>
+											<p class="c7">学习人数：<span>{{ org.study_num }}</span></p>
+										</li>
+										<li class="c8" style="padding-left:18px;">{{ org.address }}</li>
+										<li class="pic10" style="padding-left:18px;">经典课程：
+                                            {% for course in org.courseinfo_set.all|slice:':2' %}
+                                                <a href="/diary/19/">{{ course.name }}</a>
+                                            {% endfor %}
+										</li>
+									</ul>
+								</dd>
+								<div class="buy start_groupbuy jsShowPerfect2" data-id="22"><br />联系<br />服务</div>
+							</dl>
+                            {% endfor %}
+						</div>
+						<div class="pageturn">
+							<ul class="pagelist">
+                                {% if page_list.has_previous %}
+                                    <li class="long"><a href="?page={{ page_list.previous_page_number }}&ct={{ category }}&cityid={{ cityid}}&sort={{ sort }}">上一页</a></li>
+                                {% else %}
+                                    <li class="long"><a href="?page=1&ct={{ category }}&cityid={{ cityid}}&sort={{ sort }}">上一页</a></li>
+                                {% endif %}
+
+                                {% for i in page_list.paginator.page_range %}
+                                    <li {% ifequal i page_list.num %}class="active"{% endifequal %}><a class="page" href="?page={{ i }}&ct={{ category }}&cityid={{ cityid}}&sort={{ sort }}">{{ i }}</a></li>
+                                {% endfor %}
+
+                                {% if page_list.has_next %}
+                                    <li class="long"><a href="?page={{ page_list.next_page_number }}&ct={{ category }}&cityid={{ cityid}}&sort={{ sort }}">下一页</a></li>
+                                {% else %}
+                                    <li class="long"><a href="?page={{ page_list.paginator.num_pages }}&ct={{ category }}&cityid={{ cityid}}&sort={{ sort }}">下一页</a></li>
+                                {% endif %}
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="right companyright">
+					<div class="head">我要学习</div>
+					<form class="rightform" id="jsStayForm" method='post'>{% csrf_token %}
+						<div>
+							<img src="{% static 'images/rightform1.png' %}" />
+							<input type="text" name="name" id="companyName" placeholder="名字" maxlength="25" />
+						</div>
+						<div>
+							<img src="{% static 'images/rightform2.png' %}" />
+							<input type="text" name="phone" id="companyMobile" placeholder="联系电话" />
+						</div>
+						<div>
+							<img src="{% static 'images/rightform3.png' %}" />
+							<input type="text" name="course" id="companyCourse" placeholder="课程名" maxlength="50" />
+						</div>
+						<p class="error company-tips" id="jsCompanyTips"></p>
+                        <input class="btn" type="text" id="jsStayBtn" value="立即咨询 >" />
+
+					</form>
+				</div>
+				<div class="right companyrank layout">
+					<div class="head">授课机构排名</div>
+                    {% for org in orgs_sort %}
+                    <dl class="des">
+						<dt class="num fl">{{ forloop.counter }}</dt>
+						<dd>
+							<a href="/company/2/">
+								<h1>{{ org.name }}</h1>
+							</a>
+							<p>{{ org.cityinfo.name }}</p>
+						</dd>
+					</dl>
+                    {% endfor %}
+				</div>
+			</div>
+		</section>
+{% endblock%}
+{% block myjs %}
+    <script>
+        $("#jsStayBtn").click(function() {
+            var name = $('#companyName').val();
+            var phone = $('#companyMobile').val();
+            var course = $('#companyCourse').val();
+            $.ajax({
+                type:'POST',
+                url:'{% url 'operations:user_ask' %}',
+                data:{csrfmiddlewaretoken:'{{ csrf_token }}',name:name,phone:phone,course:course},
+                success:function (data) {
+                    console.log(data);
+                    $('#companyName').val('');
+                    $('#companyMobile').val('');
+                    $('#companyCourse').val('');
+                    if (data.status == 'ok') {
+                        alert(data.msg)
+                    } else {
+                        $('#jsCompanyTips').text(data.msg);
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}
+
